@@ -24,11 +24,54 @@
         </main>
     </div>
     
+    <!-- 调试面板 -->
+    <div id="debugPanel" class="debug-panel">
+        <div class="debug-panel-header">
+            <h3>背景效果调试面板</h3>
+            <button id="closeDebugPanel" class="close-btn">×</button>
+        </div>
+        <div class="debug-panel-content">
+            <div class="debug-control-group">
+                <label for="forceRadius">
+                    <span>力场半径</span>
+                    <span id="forceRadiusValue">15</span>
+                </label>
+                <input type="range" id="forceRadius" min="5" max="30" value="15" step="1">
+            </div>
+            <div class="debug-control-group">
+                <label for="forceStrength">
+                    <span>推力强度</span>
+                    <span id="forceStrengthValue">2</span>
+                </label>
+                <input type="range" id="forceStrength" min="0.5" max="5" value="2" step="0.1">
+            </div>
+            <div class="debug-control-group">
+                <label for="maxDeformation">
+                    <span>最大形变</span>
+                    <span id="maxDeformationValue">0.3</span>
+                </label>
+                <input type="range" id="maxDeformation" min="0" max="1" value="0.3" step="0.05">
+            </div>
+            <div class="debug-control-group">
+                <label for="smoothFactor">
+                    <span>平滑因子</span>
+                    <span id="smoothFactorValue">0.1</span>
+                </label>
+                <input type="range" id="smoothFactor" min="0.01" max="0.5" value="0.1" step="0.01">
+            </div>
+        </div>
+        <div class="debug-panel-footer">
+            <small>按 Option + T 切换显示/隐藏</small>
+        </div>
+    </div>
+    
     <!-- Three.js 库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- 背景动画脚本 -->
     <script src="js/background.js"></script>
     <!-- 主页交互脚本 -->
     <script src="js/home.js"></script>
+    <!-- 调试面板脚本 -->
+    <script src="js/debug-panel.js"></script>
 </body>
 </html>
