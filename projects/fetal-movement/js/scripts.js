@@ -56,3 +56,4 @@ backBtn.addEventListener('click', () => {
     mainPage.style.display = 'flex';
     historyPage.style.display = 'none';
 });
+
