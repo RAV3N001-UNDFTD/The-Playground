@@ -162,6 +162,67 @@ body {
     border: 1px solid rgba(74, 144, 226, 0.3);
 }
 
+/* 项目元数据 */
+.project-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.project-type,
+.project-status {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 10px;
+    border: 1px solid;
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 500;
+}
+
+/* 技术栈 */
+.project-tech-stack {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 12px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.tech-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+
+.tech-item {
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* 项目底部信息 */
+.project-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+}
+
+.project-date {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+}
+
+.project-inspiration {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     .content-wrapper {
@@ -193,6 +254,18 @@ body {
     
     .project-title {
         font-size: 1.3rem;
+    }
+    
+    .project-meta {
+        font-size: 0.7rem;
+    }
+    
+    .project-tech-stack {
+        font-size: 0.8rem;
+    }
+    
+    .project-footer {
+        font-size: 0.75rem;
     }
 }
 
