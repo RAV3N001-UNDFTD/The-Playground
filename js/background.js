@@ -1,7 +1,8 @@
-// Three.js 背景动画 - 几何图形风格
+// Three.js 背景动画 - 几何图形风格（优化版）
 let scene, camera, renderer;
 let geometries = [];
 let lines = [];
+let particles = null; // 粒子系统
 let animationId;
 
 // 鼠标交互相关变量
@@ -27,7 +28,8 @@ function initBackground() {
     
     // 创建场景
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0a0a0a, 10, 50);
+    // 使用更柔和的雾效，增强深度感
+    scene.fog = new THREE.FogExp2(0x0a0a0a, 0.08);
     
     // 创建相机
     const width = window.innerWidth;
@@ -50,18 +52,36 @@ function initBackground() {
     // 创建线条网络
     createLineNetwork();
     
-    // 添加环境光
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // 创建粒子系统
+    createParticleSystem();
+    
+    // 添加环境光（降低强度，让点光源更突出）
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
     scene.add(ambientLight);
     
-    // 添加点光源
-    const pointLight1 = new THREE.PointLight(0x4a90e2, 1, 100);
+    // 添加动态点光源（增强视觉效果）
+    const pointLight1 = new THREE.PointLight(0x4a90e2, 1.5, 100);
     pointLight1.position.set(20, 20, 20);
+    pointLight1.castShadow = false;
     scene.add(pointLight1);
     
-    const pointLight2 = new THREE.PointLight(0xe24a90, 1, 100);
+    const pointLight2 = new THREE.PointLight(0xe24a90, 1.5, 100);
     pointLight2.position.set(-20, -20, 20);
+    pointLight2.castShadow = false;
     scene.add(pointLight2);
+    
+    // 添加第三个光源（增强色彩层次）
+    const pointLight3 = new THREE.PointLight(0x90e24a, 1, 100);
+    pointLight3.position.set(0, -25, 15);
+    pointLight3.castShadow = false;
+    scene.add(pointLight3);
+    
+    // 保存光源引用用于动画
+    scene.userData.lights = {
+        light1: pointLight1,
+        light2: pointLight2,
+        light3: pointLight3
+    };
     
     // 初始化鼠标交互
     initMouseInteraction();
@@ -106,13 +126,30 @@ function createGeometries() {
                 geometry = new THREE.OctahedronGeometry(geo.size);
         }
         
+        // 使用更高级的材质，添加发光效果
         const material = new THREE.MeshPhongMaterial({
             color: colors[index % colors.length],
             transparent: true,
-            opacity: 0.7,
+            opacity: 0.8,
             wireframe: false,
-            shininess: 100
+            shininess: 150,
+            emissive: colors[index % colors.length],
+            emissiveIntensity: 0.2,
+            specular: 0xffffff,
+            flatShading: false
         });
+        
+        // 添加外发光效果（使用额外的几何体）
+        const glowGeometry = geometry.clone();
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: colors[index % colors.length],
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+        glowMesh.scale.multiplyScalar(1.2);
+        mesh.add(glowMesh);
         
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(geo.position[0], geo.position[1], geo.position[2]);
@@ -159,11 +196,12 @@ function createLineNetwork() {
         ));
     }
     
-    // 创建线条连接
+    // 创建线条连接（使用渐变材质效果）
     const lineMaterial = new THREE.LineBasicMaterial({
         color: 0x4a90e2,
         transparent: true,
-        opacity: 0.3
+        opacity: 0.4,
+        linewidth: 1
     });
     
     // 连接附近的点
@@ -184,6 +222,70 @@ function createLineNetwork() {
     
     // 保存点用于动画
     lines.userData = { points: points };
+}
+
+// 创建粒子系统
+function createParticleSystem() {
+    const particleCount = 200;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const sizes = new Float32Array(particleCount);
+    
+    const colorPalette = [
+        new THREE.Color(0x4a90e2),
+        new THREE.Color(0xe24a90),
+        new THREE.Color(0x90e24a),
+        new THREE.Color(0xe2904a)
+    ];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        
+        // 随机位置
+        positions[i3] = (Math.random() - 0.5) * 100;
+        positions[i3 + 1] = (Math.random() - 0.5) * 100;
+        positions[i3 + 2] = (Math.random() - 0.5) * 40 - 10;
+        
+        // 随机颜色
+        const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+        colors[i3] = color.r;
+        colors[i3 + 1] = color.g;
+        colors[i3 + 2] = color.b;
+        
+        // 随机大小
+        sizes[i] = Math.random() * 2 + 0.5;
+    }
+    
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    
+    const material = new THREE.PointsMaterial({
+        size: 1,
+        transparent: true,
+        opacity: 0.6,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    
+    particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+    
+    // 保存粒子数据用于动画
+    particles.userData = {
+        originalPositions: positions.slice(),
+        speeds: new Float32Array(particleCount * 3)
+    };
+    
+    // 初始化速度
+    for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        particles.userData.speeds[i3] = (Math.random() - 0.5) * 0.02;
+        particles.userData.speeds[i3 + 1] = (Math.random() - 0.5) * 0.02;
+        particles.userData.speeds[i3 + 2] = (Math.random() - 0.5) * 0.01;
+    }
 }
 
 // 初始化鼠标交互
@@ -258,6 +360,10 @@ function calculateForceField(mesh) {
     if (distance > forceParams.radius) {
         mesh.userData.targetPosition.copy(originalPos);
         mesh.userData.forceScale = 1;
+        // 重置材质发光强度
+        if (mesh.material) {
+            mesh.material.emissiveIntensity = 0.2;
+        }
         return;
     }
     
@@ -284,6 +390,11 @@ function calculateForceField(mesh) {
     // 距离越近，形变越大
     const deformation = forceParams.maxDeformation * forcePower;
     mesh.userData.forceScale = 1 + deformation;
+    
+    // 增强发光效果（距离越近，发光越强）
+    if (mesh.material) {
+        mesh.material.emissiveIntensity = 0.2 + forcePower * 0.5;
+    }
 }
 
 // 应用力场效果到几何图形
@@ -334,11 +445,65 @@ function animate() {
         }
     });
     
-    // 相机轻微旋转
+    // 相机轻微旋转（更平滑的轨道运动）
     const time = Date.now() * 0.0005;
     camera.position.x = Math.cos(time) * 5;
     camera.position.y = Math.sin(time * 0.7) * 5;
     camera.lookAt(0, 0, 0);
+    
+    // 动态光源动画
+    if (scene.userData.lights) {
+        const lightTime = Date.now() * 0.0003;
+        scene.userData.lights.light1.position.x = 20 + Math.cos(lightTime) * 5;
+        scene.userData.lights.light1.position.y = 20 + Math.sin(lightTime) * 5;
+        scene.userData.lights.light2.position.x = -20 + Math.cos(lightTime + Math.PI) * 5;
+        scene.userData.lights.light2.position.y = -20 + Math.sin(lightTime + Math.PI) * 5;
+        scene.userData.lights.light3.position.x = Math.cos(lightTime * 0.5) * 10;
+        scene.userData.lights.light3.position.z = 15 + Math.sin(lightTime * 0.5) * 5;
+    }
+    
+    // 粒子系统动画
+    if (particles && particles.userData) {
+        const positions = particles.geometry.attributes.position.array;
+        const speeds = particles.userData.speeds;
+        const originalPositions = particles.userData.originalPositions;
+        
+        for (let i = 0; i < positions.length; i += 3) {
+            // 更新位置
+            positions[i] += speeds[i];
+            positions[i + 1] += speeds[i + 1];
+            positions[i + 2] += speeds[i + 2];
+            
+            // 边界检测和重置
+            if (Math.abs(positions[i]) > 50) {
+                positions[i] = originalPositions[i];
+            }
+            if (Math.abs(positions[i + 1]) > 50) {
+                positions[i + 1] = originalPositions[i + 1];
+            }
+            if (Math.abs(positions[i + 2]) > 20 || positions[i + 2] < -30) {
+                positions[i + 2] = originalPositions[i + 2];
+            }
+        }
+        
+        particles.geometry.attributes.position.needsUpdate = true;
+    }
+    
+    // 线条网络动态效果（根据鼠标位置调整透明度和颜色）
+    const mouseDistance = mouseTarget.length();
+    const lineOpacity = Math.min(0.6, 0.3 + mouseDistance * 0.01);
+    lines.forEach((line, index) => {
+        if (line.material) {
+            line.material.opacity = lineOpacity;
+            // 根据鼠标距离动态调整颜色强度
+            const colorIntensity = 0.4 + Math.min(0.3, mouseDistance * 0.01);
+            line.material.color.setRGB(
+                colorIntensity * 0.29,  // R: 74/255
+                colorIntensity * 0.56, // G: 144/255
+                colorIntensity * 0.89  // B: 226/255
+            );
+        }
+    });
     
     renderer.render(scene, camera);
 }
@@ -371,6 +536,13 @@ function disposeBackground() {
         if (line.material) line.material.dispose();
         scene.remove(line);
     });
+    
+    if (particles) {
+        if (particles.geometry) particles.geometry.dispose();
+        if (particles.material) particles.material.dispose();
+        scene.remove(particles);
+        particles = null;
+    }
     
     if (renderer) {
         renderer.dispose();

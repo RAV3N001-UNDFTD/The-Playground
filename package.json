@@ -1,0 +1,13 @@
+{
+  "name": "the-playground",
+  "version": "1.0.0",
+  "description": "个人创意实验场与灵感沉淀空间",
+  "scripts": {
+    "build:css": "tailwindcss -i ./css/shadcn.css -o ./css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./css/shadcn.css -o ./css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
+

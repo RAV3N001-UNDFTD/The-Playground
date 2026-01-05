@@ -1,22 +1,5 @@
-// 主页交互逻辑
-// 注意：此文件已更新为使用 API，但保留本地数据作为后备
-
-// 本地项目数据（作为后备，当 API 不可用时使用）
-const localProjects = [
-    {
-        title: '宝宝胎动记录器',
-        icon: '❤️',
-        description: '专为孕期设计的胎动记录工具，帮助准妈妈记录和追踪宝宝的胎动情况。',
-        link: 'projects/fetal-movement/index.html',
-        type: 'app', // 项目类型: app, animation, tool, note, experiment
-        status: 'completed', // 状态: active, completed, archived
-        tech_stack: ['HTML5', 'CSS3', 'JavaScript'], // 注意：API 使用 tech_stack
-        tags: ['健康', '工具', '记录'],
-        date: '2025-12-21',
-        inspiration: '为怀孕的老婆记录胎动的需求'
-    }
-    // 可以在这里添加更多项目
-];
+// 项目管理逻辑
+import { api } from './api.js';
 
 // 项目类型配置
 const projectTypes = {
@@ -34,46 +17,22 @@ const projectStatus = {
     archived: { label: '已归档', color: '#888888' }
 };
 
-// 初始化项目卡片
-async function initProjects() {
-    const projectsGrid = document.getElementById('projectsGrid');
-    if (!projectsGrid) return;
-    
-    let projects = [];
-    
-    // 尝试从 API 加载项目
-    if (typeof api !== 'undefined') {
-        try {
-            projects = await api.getProjects();
-            console.log('从 API 加载项目:', projects.length);
-        } catch (error) {
-            console.warn('API 加载失败，使用本地数据:', error);
-            projects = localProjects;
-        }
-    } else {
-        // 如果 API 未定义，使用本地数据
-        projects = localProjects;
+// 从 API 加载项目
+async function loadProjects() {
+    try {
+        const projects = await api.getProjects();
+        return projects;
+    } catch (error) {
+        console.error('加载项目失败:', error);
+        // 如果 API 不可用，返回空数组或使用本地数据
+        return [];
     }
-    
-    // 如果项目为空，使用本地数据
-    if (projects.length === 0) {
-        projects = localProjects;
-    }
-    
-    projects.forEach((project, index) => {
-        // 兼容处理：techStack -> tech_stack
-        if (project.techStack && !project.tech_stack) {
-            project.tech_stack = project.techStack;
-        }
-        const card = createProjectCard(project, index);
-        projectsGrid.appendChild(card);
-    });
 }
 
 // 创建项目卡片
 function createProjectCard(project, index) {
     const card = document.createElement('a');
-    card.href = project.link;
+    card.href = project.link || `#project-${project.id}`;
     card.className = 'project-card card';
     card.style.animationDelay = `${index * 0.1}s`;
     
@@ -109,7 +68,7 @@ function createProjectCard(project, index) {
     title.className = 'project-title';
     const icon = document.createElement('span');
     icon.className = 'project-icon';
-    icon.textContent = project.icon;
+    icon.textContent = project.icon || '📦';
     const titleText = document.createElement('span');
     titleText.textContent = project.title;
     title.appendChild(icon);
@@ -118,11 +77,10 @@ function createProjectCard(project, index) {
     // 描述
     const description = document.createElement('div');
     description.className = 'project-description';
-    description.textContent = project.description;
+    description.textContent = project.description || '';
     
-    // 技术栈（兼容 techStack 和 tech_stack）
-    const techStackList = project.tech_stack || project.techStack;
-    if (techStackList && techStackList.length > 0) {
+    // 技术栈
+    if (project.tech_stack && project.tech_stack.length > 0) {
         const techStack = document.createElement('div');
         techStack.className = 'project-tech-stack';
         const techLabel = document.createElement('span');
@@ -130,12 +88,12 @@ function createProjectCard(project, index) {
         techLabel.textContent = '技术栈: ';
         techStack.appendChild(techLabel);
         
-        techStackList.forEach((tech, i) => {
+        project.tech_stack.forEach((tech, i) => {
             const techItem = document.createElement('span');
             techItem.className = 'tech-item';
             techItem.textContent = tech;
             techStack.appendChild(techItem);
-            if (i < techStackList.length - 1) {
+            if (i < project.tech_stack.length - 1) {
                 const separator = document.createElement('span');
                 separator.textContent = ' • ';
                 separator.style.color = 'rgba(255, 255, 255, 0.4)';
@@ -150,9 +108,9 @@ function createProjectCard(project, index) {
         const tags = document.createElement('div');
         tags.className = 'project-tags';
         project.tags.forEach(tag => {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'project-tag badge badge-secondary';
-        tagElement.textContent = tag;
+            const tagElement = document.createElement('span');
+            tagElement.className = 'project-tag badge badge-secondary';
+            tagElement.textContent = tag;
             tags.appendChild(tagElement);
         });
         content.appendChild(tags);
@@ -187,30 +145,29 @@ function createProjectCard(project, index) {
     return card;
 }
 
-// 平滑滚动（如果需要）
-function smoothScrollTo(target) {
-    const element = document.querySelector(target);
-    if (element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+// 初始化项目列表
+async function initProjects() {
+    const projectsGrid = document.getElementById('projectsGrid');
+    if (!projectsGrid) return;
+    
+    try {
+        const projects = await loadProjects();
+        
+        // 如果 API 返回空数组，使用本地数据作为后备
+        if (projects.length === 0) {
+            // 可以在这里添加本地项目数据作为后备
+            console.log('使用本地项目数据');
+        }
+        
+        projects.forEach((project, index) => {
+            const card = createProjectCard(project, index);
+            projectsGrid.appendChild(card);
         });
+    } catch (error) {
+        console.error('初始化项目失败:', error);
     }
 }
 
-// 页面加载完成后初始化
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initProjects);
-} else {
-    initProjects();
-}
-
-// 添加页面可见性检测，优化性能
-document.addEventListener('visibilitychange', () => {
-    // 当页面不可见时，可以暂停动画以节省资源
-    // three.js 动画会继续运行，但可以通过 visibility API 优化
-});
-
-
-
+// 导出函数
+export { loadProjects, createProjectCard, initProjects, projectTypes, projectStatus };
 

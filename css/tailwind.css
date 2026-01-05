@@ -1,0 +1,14 @@
+/* 
+ * Tailwind CSS 构建文件
+ * 
+ * 要生成完整的 Tailwind CSS，请运行：
+ * npm install
+ * npm run build:css
+ * 
+ * 或者使用 Tailwind CDN（开发环境）：
+ * <script src="https://cdn.tailwindcss.com"></script>
+ */
+
+/* 临时基础样式 - 使用 Tailwind CDN 时不需要此文件 */
+/* 此文件将在运行 npm run build:css 后被替换 */
+

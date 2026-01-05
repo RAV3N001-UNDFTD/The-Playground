@@ -1,0 +1,66 @@
+/* shadcn 设计系统变量 */
+/* 注意：使用 Tailwind CDN 时，基础样式由 CDN 提供 */
+/* 如需使用本地构建版本，请运行 npm run build:css */
+
+/* 适配深色背景的 shadcn 变量 */
+:root {
+  --background: 0 0% 0%;
+  --foreground: 210 40% 98%;
+  --card: 0 0% 10% / 0.8;
+  --card-foreground: 210 40% 98%;
+  --popover: 0 0% 10% / 0.95;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217 32% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 32% 17.5%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 32% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 32% 17.5%;
+  --input: 217 32% 17.5%;
+  --ring: 217 91% 60%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 0 0% 0%;
+  --foreground: 210 40% 98%;
+  --card: 0 0% 10% / 0.8;
+  --card-foreground: 210 40% 98%;
+  --popover: 0 0% 10% / 0.95;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217 32% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 32% 17.5%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 217 32% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 32% 17.5%;
+  --input: 217 32% 17.5%;
+  --ring: 217 91% 60%;
+}
+}
+
+/* 基础样式 */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* 确保在深色背景下文字可见 */
+body {
+  background: transparent; /* 保持 Three.js 背景可见 */
+}
+

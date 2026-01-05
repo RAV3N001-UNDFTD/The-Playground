@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>骰子投掷器 - The Playground</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: ["class"],
+        theme: {
+          extend: {
+            colors: {
+              border: "hsl(var(--border))",
+              input: "hsl(var(--input))",
+              ring: "hsl(var(--ring))",
+              background: "hsl(var(--background))",
+              foreground: "hsl(var(--foreground))",
+              primary: {
+                DEFAULT: "hsl(var(--primary))",
+                foreground: "hsl(var(--primary-foreground))",
+              },
+              secondary: {
+                DEFAULT: "hsl(var(--secondary))",
+                foreground: "hsl(var(--secondary-foreground))",
+              },
+              destructive: {
+                DEFAULT: "hsl(var(--destructive))",
+                foreground: "hsl(var(--destructive-foreground))",
+              },
+              muted: {
+                DEFAULT: "hsl(var(--muted))",
+                foreground: "hsl(var(--muted-foreground))",
+              },
+              accent: {
+                DEFAULT: "hsl(var(--accent))",
+                foreground: "hsl(var(--accent-foreground))",
+              },
+              popover: {
+                DEFAULT: "hsl(var(--popover))",
+                foreground: "hsl(var(--popover-foreground))",
+              },
+              card: {
+                DEFAULT: "hsl(var(--card))",
+                foreground: "hsl(var(--card-foreground))",
+              },
+            },
+            borderRadius: {
+              lg: "var(--radius)",
+              md: "calc(var(--radius) - 2px)",
+              sm: "calc(var(--radius) - 4px)",
+            },
+          },
+        },
+      }
+    </script>
+    <!-- shadcn 设计系统变量 -->
+    <link rel="stylesheet" href="../../css/shadcn.css">
+    <!-- shadcn 组件样式 -->
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container mx-auto max-w-4xl p-4">
+        <header class="mb-8 text-center">
+            <h1 class="text-4xl font-bold mb-2">🎲 骰子投掷器</h1>
+            <p class="text-muted-foreground">用于线上跑团的骰子投掷工具</p>
+            <a href="../../index.html" class="btn btn-outline btn-sm mt-4">返回首页</a>
+        </header>
+        
+        <!-- 骰子选择区域 -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">选择骰子</h2>
+            </div>
+            <div class="card-content">
+                <div class="dice-selector grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                    <button class="dice-btn btn btn-outline" data-sides="4">d4</button>
+                    <button class="dice-btn btn btn-outline" data-sides="6">d6</button>
+                    <button class="dice-btn btn btn-outline" data-sides="8">d8</button>
+                    <button class="dice-btn btn btn-outline" data-sides="10">d10</button>
+                    <button class="dice-btn btn btn-outline" data-sides="12">d12</button>
+                    <button class="dice-btn btn btn-outline" data-sides="20">d20</button>
+                </div>
+                
+                <!-- 自定义骰子 -->
+                <div class="mt-4">
+                    <label class="label mb-2">自定义面数</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="customSides" class="input" min="2" max="100" value="6" placeholder="面数">
+                        <button id="customDiceBtn" class="btn btn-secondary">投掷</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 多骰子组合 -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">多骰子组合</h2>
+            </div>
+            <div class="card-content">
+                <div class="flex gap-2 items-end flex-wrap">
+                    <div>
+                        <label class="label mb-2">数量</label>
+                        <input type="number" id="diceCount" class="input" min="1" max="10" value="1">
+                    </div>
+                    <div>
+                        <label class="label mb-2">面数</label>
+                        <input type="number" id="diceSides" class="input" min="2" max="100" value="6">
+                    </div>
+                    <div>
+                        <label class="label mb-2">修正值（可选）</label>
+                        <input type="number" id="modifier" class="input" value="0" placeholder="+/-">
+                    </div>
+                    <button id="rollMultipleBtn" class="btn btn-primary">投掷</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 结果显示区域 -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">投掷结果</h2>
+            </div>
+            <div class="card-content">
+                <div id="resultDisplay" class="result-display">
+                    <p class="text-center text-muted-foreground">点击上方按钮开始投掷</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 投掷历史 -->
+        <div class="card">
+            <div class="card-header flex justify-between items-center">
+                <h2 class="card-title">投掷历史</h2>
+                <button id="clearHistoryBtn" class="btn btn-outline btn-sm">清空历史</button>
+            </div>
+            <div class="card-content">
+                <div id="historyList" class="history-list">
+                    <p class="text-center text-muted-foreground">暂无历史记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/scripts.js"></script>
+</body>
+</html>
+

@@ -5,33 +5,171 @@
     box-sizing: border-box;
 }
 
+/* ============================================
+   CSS 变量定义 - 噪点渐变背景颜色系统
+   参考图：橙红色到浅蓝色渐变风格
+   ============================================ */
+:root {
+    /* 暖色系 - 橙红色 */
+    --orange-red-bright: #FF6B4A;
+    --orange-red-vibrant: #FF5733;
+    --orange-red-deep: #E63946;
+    --orange-red-dark: #C92A2A;
+    
+    /* 冷色系 - 浅蓝色/青色 */
+    --cyan-bright: #7DD3FC;
+    --cyan-light: #A5F3FC;
+    --cyan-soft: #BAE6FD;
+    --cyan-pale: #E0F2FE;
+    
+    /* 深色系 - 下半部分 */
+    --dark-base: #0A0A0A;
+    --dark-deep: #000000;
+    --dark-soft: #1A1A1A;
+    
+    /* 渐变尺寸 */
+    --gradient-size-1: 70%;
+    --gradient-size-2: 65%;
+    --gradient-size-3: 60%;
+    --gradient-size-4: 80%;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     overflow-x: hidden;
     color: #ffffff;
     position: relative;
+    min-height: 100vh;
+    
+    /* ============================================
+       静态渐变背景 - 噪点风格
+       橙红色（左上）到浅蓝色（右上），下半部分深色
+       ============================================ */
+    background-color: var(--dark-base);
+    
+    /* 多层径向渐变叠加 */
+    background-image: 
+        /* 第1层：左上角橙红色光斑 */
+        radial-gradient(
+            circle at 10% 15%,
+            var(--orange-red-bright) 0%,
+            var(--orange-red-vibrant) 20%,
+            var(--orange-red-deep) 40%,
+            transparent var(--gradient-size-1)
+        ),
+        /* 第2层：右上角浅蓝色/青色光斑 */
+        radial-gradient(
+            circle at 90% 15%,
+            var(--cyan-bright) 0%,
+            var(--cyan-light) 25%,
+            var(--cyan-soft) 40%,
+            transparent var(--gradient-size-2)
+        ),
+        /* 第3层：顶部中心混合区域（橙红和浅蓝混合成浅色） */
+        radial-gradient(
+            ellipse at 50% 10%,
+            rgba(255, 255, 255, 0.3) 0%,
+            rgba(255, 255, 255, 0.1) 30%,
+            transparent 50%
+        ),
+        /* 第4层：下半部分深色区域（从底部向上扩散） */
+        radial-gradient(
+            ellipse at 50% 85%,
+            var(--dark-deep) 0%,
+            var(--dark-soft) 30%,
+            var(--dark-base) 50%,
+            transparent var(--gradient-size-4)
+        ),
+        /* 第5层：左侧深色过渡（橙红到深色） */
+        radial-gradient(
+            ellipse at 20% 60%,
+            var(--orange-red-dark) 0%,
+            var(--dark-soft) 35%,
+            transparent 55%
+        ),
+        /* 第6层：右侧深色过渡（浅蓝到深色） */
+        radial-gradient(
+            ellipse at 80% 65%,
+            rgba(125, 211, 252, 0.2) 0%,
+            var(--dark-soft) 30%,
+            transparent 50%
+        );
+    
+    background-size: 
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        100% 100%;
+    
+    background-position: 
+        0% 0%,
+        100% 0%,
+        50% 0%,
+        50% 100%,
+        0% 0%,
+        100% 0%;
+    
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-/* Three.js 背景画布 */
-#background-canvas {
+/* 噪点纹理层 - 使用伪元素 */
+body::before {
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: 0;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    pointer-events: none;
+    
+    /* 使用纯CSS噪点纹理 */
+    background-image: 
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.03) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.03) 0px,
+            transparent 1px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.03) 2px,
+            transparent 3px
+        );
+    
+    background-size: 4px 4px;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+}
+
+/* ============================================
+   Three.js 背景画布 - 隐藏（使用静态CSS背景替代）
+   ============================================ */
+#background-canvas {
+    display: none; /* 隐藏canvas，使用body背景替代 */
 }
 
 /* 内容包装器 */
 .content-wrapper {
     position: relative;
-    z-index: 1;
+    z-index: 1; /* 确保内容在背景之上 */
     min-height: 100vh;
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* 文字阴影增强可读性（确保深色区域文字对比度） */
+    text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* 头部区域 */
@@ -39,11 +177,14 @@ body {
     text-align: center;
     margin-bottom: 60px;
     padding: 40px 20px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
+    /* 增强背景对比度，确保在新渐变背景上的可见度 */
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px) saturate(180%);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     max-width: 800px;
     width: 100%;
 }
@@ -80,14 +221,20 @@ body {
     padding: 20px;
 }
 
-/* 项目卡片 */
+/* 项目卡片 - 使用 shadcn card 样式 */
 .project-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(15px);
+    /* shadcn card 基础样式 */
+    @apply card;
+    
+    /* 增强背景对比度，确保在新渐变背景上的可见度 */
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px) saturate(180%);
     border-radius: 16px;
     padding: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
@@ -112,8 +259,12 @@ body {
 
 .project-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 16px 48px rgba(74, 144, 226, 0.3);
-    border-color: rgba(74, 144, 226, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 
+        0 16px 48px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
 }
 
 .project-card:hover::before {
@@ -172,6 +323,9 @@ body {
 
 .project-type,
 .project-status {
+    /* 使用 shadcn badge 样式 */
+    @apply badge badge-outline;
+    
     font-size: 0.75rem;
     padding: 3px 10px;
     border-radius: 10px;
@@ -267,11 +421,65 @@ body {
     .project-footer {
         font-size: 0.75rem;
     }
+    
+    /* 移动端背景优化 - 简化层数以优化性能 */
+    body {
+        background-image: 
+            /* 左上角橙红色光斑 */
+            radial-gradient(
+                circle at 10% 15%,
+                var(--orange-red-bright) 0%,
+                var(--orange-red-vibrant) 25%,
+                transparent 55%
+            ),
+            /* 右上角浅蓝色光斑 */
+            radial-gradient(
+                circle at 90% 15%,
+                var(--cyan-bright) 0%,
+                var(--cyan-light) 30%,
+                transparent 50%
+            ),
+            /* 下半部分深色区域 */
+            radial-gradient(
+                ellipse at 50% 85%,
+                var(--dark-deep) 0%,
+                var(--dark-base) 40%,
+                transparent 70%
+            );
+    }
+    
+    /* 移动端降低噪点强度 */
+    body::before {
+        opacity: 0.25;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
     .projects-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* 平板设备背景优化 - 使用中等复杂度渐变 */
+    body {
+        background-image: 
+            radial-gradient(
+                circle at 10% 15%,
+                var(--orange-red-bright) 0%,
+                var(--orange-red-deep) 35%,
+                transparent 55%
+            ),
+            radial-gradient(
+                circle at 90% 15%,
+                var(--cyan-bright) 0%,
+                var(--cyan-soft) 30%,
+                transparent 45%
+            ),
+            radial-gradient(
+                ellipse at 50% 80%,
+                var(--dark-deep) 0%,
+                var(--dark-base) 35%,
+                transparent 65%
+            );
     }
 }
 
@@ -304,11 +512,14 @@ body {
     top: 20px;
     right: 20px;
     width: 320px;
-    background: rgba(20, 20, 30, 0.95);
-    backdrop-filter: blur(20px);
+    /* 增强背景对比度，确保在新渐变背景上的可见度 */
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     z-index: 1000;
     display: none;
     color: #ffffff;
@@ -348,6 +559,9 @@ body {
 }
 
 .close-btn {
+    /* 使用 shadcn btn-ghost 样式 */
+    @apply btn btn-ghost;
+    
     background: transparent;
     border: none;
     color: #ffffff;
@@ -464,6 +678,25 @@ body {
         right: 20px;
         left: 20px;
         top: 20px;
+    }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+    body::before {
+        opacity: 0.2; /* 降低噪点，提高对比度 */
+    }
+    
+    .content-wrapper {
+        text-shadow: 
+            0 3px 6px rgba(0, 0, 0, 0.9),
+            0 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    
+    .header,
+    .project-card {
+        background: rgba(0, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.3);
     }
 }
 
