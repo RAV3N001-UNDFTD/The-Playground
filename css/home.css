@@ -41,114 +41,11 @@ body {
     position: relative;
     min-height: 100vh;
     
-    /* ============================================
-       静态渐变背景 - 噪点风格
-       橙红色（左上）到浅蓝色（右上），下半部分深色
-       ============================================ */
-    background-color: var(--dark-base);
-    
-    /* 多层径向渐变叠加 */
-    background-image: 
-        /* 第1层：左上角橙红色光斑 */
-        radial-gradient(
-            circle at 10% 15%,
-            var(--orange-red-bright) 0%,
-            var(--orange-red-vibrant) 20%,
-            var(--orange-red-deep) 40%,
-            transparent var(--gradient-size-1)
-        ),
-        /* 第2层：右上角浅蓝色/青色光斑 */
-        radial-gradient(
-            circle at 90% 15%,
-            var(--cyan-bright) 0%,
-            var(--cyan-light) 25%,
-            var(--cyan-soft) 40%,
-            transparent var(--gradient-size-2)
-        ),
-        /* 第3层：顶部中心混合区域（橙红和浅蓝混合成浅色） */
-        radial-gradient(
-            ellipse at 50% 10%,
-            rgba(255, 255, 255, 0.3) 0%,
-            rgba(255, 255, 255, 0.1) 30%,
-            transparent 50%
-        ),
-        /* 第4层：下半部分深色区域（从底部向上扩散） */
-        radial-gradient(
-            ellipse at 50% 85%,
-            var(--dark-deep) 0%,
-            var(--dark-soft) 30%,
-            var(--dark-base) 50%,
-            transparent var(--gradient-size-4)
-        ),
-        /* 第5层：左侧深色过渡（橙红到深色） */
-        radial-gradient(
-            ellipse at 20% 60%,
-            var(--orange-red-dark) 0%,
-            var(--dark-soft) 35%,
-            transparent 55%
-        ),
-        /* 第6层：右侧深色过渡（浅蓝到深色） */
-        radial-gradient(
-            ellipse at 80% 65%,
-            rgba(125, 211, 252, 0.2) 0%,
-            var(--dark-soft) 30%,
-            transparent 50%
-        );
-    
-    background-size: 
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%,
-        100% 100%;
-    
-    background-position: 
-        0% 0%,
-        100% 0%,
-        50% 0%,
-        50% 100%,
-        0% 0%,
-        100% 0%;
-    
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* 深灰色背景 */
+    background-color: #1a1a1a;
 }
 
-/* 噪点纹理层 - 使用伪元素 */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    
-    /* 使用纯CSS噪点纹理 */
-    background-image: 
-        repeating-linear-gradient(
-            0deg,
-            rgba(255, 255, 255, 0.03) 0px,
-            transparent 1px,
-            transparent 2px,
-            rgba(0, 0, 0, 0.03) 2px,
-            transparent 3px
-        ),
-        repeating-linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.03) 0px,
-            transparent 1px,
-            transparent 2px,
-            rgba(0, 0, 0, 0.03) 2px,
-            transparent 3px
-        );
-    
-    background-size: 4px 4px;
-    opacity: 0.4;
-    mix-blend-mode: overlay;
-}
+/* 噪点纹理层 - 已移除（纯色背景不需要） */
 
 /* ============================================
    Three.js 背景画布 - 隐藏（使用静态CSS背景替代）
@@ -177,14 +74,15 @@ body::before {
     text-align: center;
     margin-bottom: 60px;
     padding: 40px 20px;
-    /* 增强背景对比度，确保在新渐变背景上的可见度 */
-    background: rgba(0, 0, 0, 0.4);
+    /* 深灰色背景，确保在 #1a1a1a 背景上可见 */
+    background: rgba(15, 15, 15, 0.9);
     backdrop-filter: blur(20px) saturate(180%);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 8px 32px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     max-width: 800px;
     width: 100%;
 }
@@ -203,9 +101,10 @@ body::before {
 
 .site-subtitle {
     font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 300;
     letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* 项目容器 */
@@ -226,14 +125,15 @@ body::before {
     /* shadcn card 基础样式 */
     @apply card;
     
-    /* 增强背景对比度，确保在新渐变背景上的可见度 */
-    background: rgba(0, 0, 0, 0.35);
+    /* 深灰色背景，确保在 #1a1a1a 背景上可见 */
+    background: rgba(15, 15, 15, 0.85);
     backdrop-filter: blur(20px) saturate(180%);
     border-radius: 16px;
     padding: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -259,12 +159,12 @@ body::before {
 
 .project-card:hover {
     transform: translateY(-8px) scale(1.02);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(10, 10, 10, 0.95);
     box-shadow: 
-        0 16px 48px rgba(0, 0, 0, 0.6),
-        0 0 0 1px rgba(255, 255, 255, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
+        0 16px 48px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .project-card:hover::before {
@@ -292,7 +192,7 @@ body::before {
 
 .project-description {
     font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.6;
     margin-bottom: 15px;
 }
@@ -305,12 +205,12 @@ body::before {
 }
 
 .project-tag {
-    background: rgba(74, 144, 226, 0.2);
-    color: #4a90e2;
+    background: rgba(74, 144, 226, 0.25);
+    color: #6ba3e8;
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.85rem;
-    border: 1px solid rgba(74, 144, 226, 0.3);
+    border: 1px solid rgba(74, 144, 226, 0.4);
 }
 
 /* 项目元数据 */
@@ -330,7 +230,7 @@ body::before {
     padding: 3px 10px;
     border-radius: 10px;
     border: 1px solid;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     font-weight: 500;
 }
 
@@ -346,12 +246,12 @@ body::before {
 }
 
 .tech-label {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
     font-weight: 500;
 }
 
 .tech-item {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.85);
     font-family: 'Monaco', 'Menlo', monospace;
 }
 
@@ -362,17 +262,17 @@ body::before {
     gap: 6px;
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     font-size: 0.8rem;
 }
 
 .project-date {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.65);
     font-size: 0.75rem;
 }
 
 .project-inspiration {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 0.8rem;
     font-style: italic;
 }
@@ -422,35 +322,9 @@ body::before {
         font-size: 0.75rem;
     }
     
-    /* 移动端背景优化 - 简化层数以优化性能 */
+    /* 移动端背景 - 深灰色 */
     body {
-        background-image: 
-            /* 左上角橙红色光斑 */
-            radial-gradient(
-                circle at 10% 15%,
-                var(--orange-red-bright) 0%,
-                var(--orange-red-vibrant) 25%,
-                transparent 55%
-            ),
-            /* 右上角浅蓝色光斑 */
-            radial-gradient(
-                circle at 90% 15%,
-                var(--cyan-bright) 0%,
-                var(--cyan-light) 30%,
-                transparent 50%
-            ),
-            /* 下半部分深色区域 */
-            radial-gradient(
-                ellipse at 50% 85%,
-                var(--dark-deep) 0%,
-                var(--dark-base) 40%,
-                transparent 70%
-            );
-    }
-    
-    /* 移动端降低噪点强度 */
-    body::before {
-        opacity: 0.25;
+        background-color: #1a1a1a;
     }
 }
 
@@ -459,27 +333,9 @@ body::before {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    /* 平板设备背景优化 - 使用中等复杂度渐变 */
+    /* 平板设备背景 - 深灰色 */
     body {
-        background-image: 
-            radial-gradient(
-                circle at 10% 15%,
-                var(--orange-red-bright) 0%,
-                var(--orange-red-deep) 35%,
-                transparent 55%
-            ),
-            radial-gradient(
-                circle at 90% 15%,
-                var(--cyan-bright) 0%,
-                var(--cyan-soft) 30%,
-                transparent 45%
-            ),
-            radial-gradient(
-                ellipse at 50% 80%,
-                var(--dark-deep) 0%,
-                var(--dark-base) 35%,
-                transparent 65%
-            );
+        background-color: #1a1a1a;
     }
 }
 
@@ -512,14 +368,15 @@ body::before {
     top: 20px;
     right: 20px;
     width: 320px;
-    /* 增强背景对比度，确保在新渐变背景上的可见度 */
-    background: rgba(0, 0, 0, 0.75);
+    /* 深灰色背景，确保在 #1a1a1a 背景上可见 */
+    background: rgba(15, 15, 15, 0.95);
     backdrop-filter: blur(20px) saturate(180%);
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        0 8px 32px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     z-index: 1000;
     display: none;
     color: #ffffff;
@@ -548,7 +405,7 @@ body::before {
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .debug-panel-header h3 {
@@ -662,12 +519,12 @@ body::before {
 
 .debug-panel-footer {
     padding: 12px 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     text-align: center;
 }
 
 .debug-panel-footer small {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.75);
     font-size: 0.75rem;
 }
 
@@ -683,10 +540,6 @@ body::before {
 
 /* 高对比度模式支持 */
 @media (prefers-contrast: high) {
-    body::before {
-        opacity: 0.2; /* 降低噪点，提高对比度 */
-    }
-    
     .content-wrapper {
         text-shadow: 
             0 3px 6px rgba(0, 0, 0, 0.9),
@@ -695,8 +548,15 @@ body::before {
     
     .header,
     .project-card {
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(10, 10, 10, 0.95);
         border-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .site-subtitle,
+    .project-description,
+    .tech-item,
+    .project-inspiration {
+        color: rgba(255, 255, 255, 0.95);
     }
 }
 
