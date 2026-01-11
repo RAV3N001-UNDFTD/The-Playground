@@ -115,91 +115,285 @@ window.hideDebugPanel = () => {
     if (isPanelVisible) toggleDebugPanel();
 };
 
+// 将 hex 颜色转换为 RGB 数组
+function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+    ] : [254, 176, 254];
+}
+
+// 将 RGB 数组转换为 hex 颜色
+function rgbToHex(rgb) {
+    return '#' + rgb.map(x => {
+        const hex = Math.round(x).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+}
+
 // 设置滑块控件
 function setupSliders() {
-    // 力场半径
-    const forceRadiusSlider = document.getElementById('forceRadius');
-    const forceRadiusValue = document.getElementById('forceRadiusValue');
-    if (forceRadiusSlider && forceRadiusValue) {
-        forceRadiusSlider.addEventListener('input', (e) => {
+    // Hero Shader 控制
+    if (!window.heroShaderParams) {
+        window.heroShaderParams = {
+            colorStart: [254, 176, 254],
+            colorEnd: [93, 247, 164],
+            gradientAngle: 36,
+            glowIntensity: 0.5,
+            glowSpeed: 0.5,
+            glowCount: 3,
+            noiseIntensity: 0.3,
+            noiseScale: 2.0,
+            flowSpeed: 1.0,
+            mouseHighlightIntensity: 0.5,
+            mouseHighlightRadius: 0.3
+        };
+    }
+    
+    // 渐变起始色
+    const heroColorStart = document.getElementById('heroColorStart');
+    if (heroColorStart) {
+        heroColorStart.value = rgbToHex(window.heroShaderParams.colorStart);
+        heroColorStart.addEventListener('input', (e) => {
+            window.heroShaderParams.colorStart = hexToRgb(e.target.value);
+        });
+    }
+    
+    // 渐变结束色
+    const heroColorEnd = document.getElementById('heroColorEnd');
+    if (heroColorEnd) {
+        heroColorEnd.value = rgbToHex(window.heroShaderParams.colorEnd);
+        heroColorEnd.addEventListener('input', (e) => {
+            window.heroShaderParams.colorEnd = hexToRgb(e.target.value);
+        });
+    }
+    
+    // 渐变角度
+    const heroGradientAngle = document.getElementById('heroGradientAngle');
+    const heroGradientAngleValue = document.getElementById('heroGradientAngleValue');
+    if (heroGradientAngle && heroGradientAngleValue) {
+        heroGradientAngle.addEventListener('input', (e) => {
             const value = parseFloat(e.target.value);
-            forceRadiusValue.textContent = value;
-            if (window.forceParams) {
-                window.forceParams.radius = value;
+            heroGradientAngleValue.textContent = value;
+            window.heroShaderParams.gradientAngle = value;
+        });
+    }
+    
+    // 光晕强度
+    const heroGlowIntensity = document.getElementById('heroGlowIntensity');
+    const heroGlowIntensityValue = document.getElementById('heroGlowIntensityValue');
+    if (heroGlowIntensity && heroGlowIntensityValue) {
+        heroGlowIntensity.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroGlowIntensityValue.textContent = value.toFixed(1);
+            window.heroShaderParams.glowIntensity = value;
+        });
+    }
+    
+    // 光晕速度
+    const heroGlowSpeed = document.getElementById('heroGlowSpeed');
+    const heroGlowSpeedValue = document.getElementById('heroGlowSpeedValue');
+    if (heroGlowSpeed && heroGlowSpeedValue) {
+        heroGlowSpeed.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroGlowSpeedValue.textContent = value.toFixed(1);
+            window.heroShaderParams.glowSpeed = value;
+        });
+    }
+    
+    // 光晕数量
+    const heroGlowCount = document.getElementById('heroGlowCount');
+    const heroGlowCountValue = document.getElementById('heroGlowCountValue');
+    if (heroGlowCount && heroGlowCountValue) {
+        heroGlowCount.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            heroGlowCountValue.textContent = value;
+            window.heroShaderParams.glowCount = value;
+        });
+    }
+    
+    // 噪点强度
+    const heroNoiseIntensity = document.getElementById('heroNoiseIntensity');
+    const heroNoiseIntensityValue = document.getElementById('heroNoiseIntensityValue');
+    if (heroNoiseIntensity && heroNoiseIntensityValue) {
+        heroNoiseIntensity.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroNoiseIntensityValue.textContent = value.toFixed(2);
+            window.heroShaderParams.noiseIntensity = value;
+        });
+    }
+    
+    // 噪点缩放
+    const heroNoiseScale = document.getElementById('heroNoiseScale');
+    const heroNoiseScaleValue = document.getElementById('heroNoiseScaleValue');
+    if (heroNoiseScale && heroNoiseScaleValue) {
+        heroNoiseScale.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroNoiseScaleValue.textContent = value.toFixed(1);
+            window.heroShaderParams.noiseScale = value;
+        });
+    }
+    
+    // 流动速度
+    const heroFlowSpeed = document.getElementById('heroFlowSpeed');
+    const heroFlowSpeedValue = document.getElementById('heroFlowSpeedValue');
+    if (heroFlowSpeed && heroFlowSpeedValue) {
+        heroFlowSpeed.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroFlowSpeedValue.textContent = value.toFixed(1);
+            window.heroShaderParams.flowSpeed = value;
+        });
+    }
+    
+    // 鼠标高亮强度
+    const heroMouseHighlightIntensity = document.getElementById('heroMouseHighlightIntensity');
+    const heroMouseHighlightIntensityValue = document.getElementById('heroMouseHighlightIntensityValue');
+    if (heroMouseHighlightIntensity && heroMouseHighlightIntensityValue) {
+        heroMouseHighlightIntensity.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroMouseHighlightIntensityValue.textContent = value.toFixed(2);
+            window.heroShaderParams.mouseHighlightIntensity = value;
+        });
+    }
+    
+    // 鼠标高亮半径
+    const heroMouseHighlightRadius = document.getElementById('heroMouseHighlightRadius');
+    const heroMouseHighlightRadiusValue = document.getElementById('heroMouseHighlightRadiusValue');
+    if (heroMouseHighlightRadius && heroMouseHighlightRadiusValue) {
+        heroMouseHighlightRadius.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            heroMouseHighlightRadiusValue.textContent = value.toFixed(2);
+            window.heroShaderParams.mouseHighlightRadius = value;
+        });
+    }
+    
+    // 保存按钮
+    const heroShaderSaveBtn = document.getElementById('heroShaderSaveBtn');
+    if (heroShaderSaveBtn) {
+        heroShaderSaveBtn.addEventListener('click', () => {
+            if (window.saveHeroShaderConfig) {
+                window.saveHeroShaderConfig();
+                // 显示保存成功提示
+                const originalText = heroShaderSaveBtn.textContent;
+                heroShaderSaveBtn.textContent = '已保存！';
+                heroShaderSaveBtn.style.opacity = '0.7';
+                setTimeout(() => {
+                    heroShaderSaveBtn.textContent = originalText;
+                    heroShaderSaveBtn.style.opacity = '1';
+                }, 1500);
             }
         });
     }
     
-    // 推力强度
-    const forceStrengthSlider = document.getElementById('forceStrength');
-    const forceStrengthValue = document.getElementById('forceStrengthValue');
-    if (forceStrengthSlider && forceStrengthValue) {
-        forceStrengthSlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
-            forceStrengthValue.textContent = value.toFixed(1);
-            if (window.forceParams) {
-                window.forceParams.strength = value;
-            }
-        });
-    }
-    
-    // 最大形变
-    const maxDeformationSlider = document.getElementById('maxDeformation');
-    const maxDeformationValue = document.getElementById('maxDeformationValue');
-    if (maxDeformationSlider && maxDeformationValue) {
-        maxDeformationSlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
-            maxDeformationValue.textContent = value.toFixed(2);
-            if (window.forceParams) {
-                window.forceParams.maxDeformation = value;
-            }
-        });
-    }
-    
-    // 平滑因子
-    const smoothFactorSlider = document.getElementById('smoothFactor');
-    const smoothFactorValue = document.getElementById('smoothFactorValue');
-    if (smoothFactorSlider && smoothFactorValue) {
-        smoothFactorSlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
-            smoothFactorValue.textContent = value.toFixed(2);
-            if (window.forceParams) {
-                window.forceParams.smoothFactor = value;
+    // 重置按钮
+    const heroShaderResetBtn = document.getElementById('heroShaderResetBtn');
+    if (heroShaderResetBtn) {
+        heroShaderResetBtn.addEventListener('click', () => {
+            if (window.resetHeroShaderConfig) {
+                window.resetHeroShaderConfig();
+                syncHeroShaderValues();
+                // 显示重置成功提示
+                const originalText = heroShaderResetBtn.textContent;
+                heroShaderResetBtn.textContent = '已重置！';
+                heroShaderResetBtn.style.opacity = '0.7';
+                setTimeout(() => {
+                    heroShaderResetBtn.textContent = originalText;
+                    heroShaderResetBtn.style.opacity = '1';
+                }, 1500);
             }
         });
     }
 }
 
-// 同步滑块值与当前参数
-function syncSliderValues() {
-    if (!window.forceParams) return;
+// 同步 Hero Shader 参数值
+function syncHeroShaderValues() {
+    if (!window.heroShaderParams) return;
     
-    const forceRadiusSlider = document.getElementById('forceRadius');
-    const forceRadiusValue = document.getElementById('forceRadiusValue');
-    if (forceRadiusSlider && forceRadiusValue) {
-        forceRadiusSlider.value = window.forceParams.radius;
-        forceRadiusValue.textContent = window.forceParams.radius;
+    const params = window.heroShaderParams;
+    
+    // 颜色选择器
+    const heroColorStart = document.getElementById('heroColorStart');
+    if (heroColorStart) {
+        heroColorStart.value = rgbToHex(params.colorStart);
     }
     
-    const forceStrengthSlider = document.getElementById('forceStrength');
-    const forceStrengthValue = document.getElementById('forceStrengthValue');
-    if (forceStrengthSlider && forceStrengthValue) {
-        forceStrengthSlider.value = window.forceParams.strength;
-        forceStrengthValue.textContent = window.forceParams.strength.toFixed(1);
+    const heroColorEnd = document.getElementById('heroColorEnd');
+    if (heroColorEnd) {
+        heroColorEnd.value = rgbToHex(params.colorEnd);
     }
     
-    const maxDeformationSlider = document.getElementById('maxDeformation');
-    const maxDeformationValue = document.getElementById('maxDeformationValue');
-    if (maxDeformationSlider && maxDeformationValue) {
-        maxDeformationSlider.value = window.forceParams.maxDeformation;
-        maxDeformationValue.textContent = window.forceParams.maxDeformation.toFixed(2);
+    // 渐变角度
+    const heroGradientAngle = document.getElementById('heroGradientAngle');
+    const heroGradientAngleValue = document.getElementById('heroGradientAngleValue');
+    if (heroGradientAngle && heroGradientAngleValue) {
+        heroGradientAngle.value = params.gradientAngle;
+        heroGradientAngleValue.textContent = params.gradientAngle;
     }
     
-    const smoothFactorSlider = document.getElementById('smoothFactor');
-    const smoothFactorValue = document.getElementById('smoothFactorValue');
-    if (smoothFactorSlider && smoothFactorValue) {
-        smoothFactorSlider.value = window.forceParams.smoothFactor;
-        smoothFactorValue.textContent = window.forceParams.smoothFactor.toFixed(2);
+    // 光晕强度
+    const heroGlowIntensity = document.getElementById('heroGlowIntensity');
+    const heroGlowIntensityValue = document.getElementById('heroGlowIntensityValue');
+    if (heroGlowIntensity && heroGlowIntensityValue) {
+        heroGlowIntensity.value = params.glowIntensity;
+        heroGlowIntensityValue.textContent = params.glowIntensity.toFixed(1);
+    }
+    
+    // 光晕速度
+    const heroGlowSpeed = document.getElementById('heroGlowSpeed');
+    const heroGlowSpeedValue = document.getElementById('heroGlowSpeedValue');
+    if (heroGlowSpeed && heroGlowSpeedValue) {
+        heroGlowSpeed.value = params.glowSpeed;
+        heroGlowSpeedValue.textContent = params.glowSpeed.toFixed(1);
+    }
+    
+    // 光晕数量
+    const heroGlowCount = document.getElementById('heroGlowCount');
+    const heroGlowCountValue = document.getElementById('heroGlowCountValue');
+    if (heroGlowCount && heroGlowCountValue) {
+        heroGlowCount.value = params.glowCount;
+        heroGlowCountValue.textContent = params.glowCount;
+    }
+    
+    // 噪点强度
+    const heroNoiseIntensity = document.getElementById('heroNoiseIntensity');
+    const heroNoiseIntensityValue = document.getElementById('heroNoiseIntensityValue');
+    if (heroNoiseIntensity && heroNoiseIntensityValue) {
+        heroNoiseIntensity.value = params.noiseIntensity;
+        heroNoiseIntensityValue.textContent = params.noiseIntensity.toFixed(2);
+    }
+    
+    // 噪点缩放
+    const heroNoiseScale = document.getElementById('heroNoiseScale');
+    const heroNoiseScaleValue = document.getElementById('heroNoiseScaleValue');
+    if (heroNoiseScale && heroNoiseScaleValue) {
+        heroNoiseScale.value = params.noiseScale;
+        heroNoiseScaleValue.textContent = params.noiseScale.toFixed(1);
+    }
+    
+    // 流动速度
+    const heroFlowSpeed = document.getElementById('heroFlowSpeed');
+    const heroFlowSpeedValue = document.getElementById('heroFlowSpeedValue');
+    if (heroFlowSpeed && heroFlowSpeedValue) {
+        heroFlowSpeed.value = params.flowSpeed;
+        heroFlowSpeedValue.textContent = params.flowSpeed.toFixed(1);
+    }
+    
+    // 鼠标高亮强度
+    const heroMouseHighlightIntensity = document.getElementById('heroMouseHighlightIntensity');
+    const heroMouseHighlightIntensityValue = document.getElementById('heroMouseHighlightIntensityValue');
+    if (heroMouseHighlightIntensity && heroMouseHighlightIntensityValue) {
+        heroMouseHighlightIntensity.value = params.mouseHighlightIntensity;
+        heroMouseHighlightIntensityValue.textContent = params.mouseHighlightIntensity.toFixed(2);
+    }
+    
+    // 鼠标高亮半径
+    const heroMouseHighlightRadius = document.getElementById('heroMouseHighlightRadius');
+    const heroMouseHighlightRadiusValue = document.getElementById('heroMouseHighlightRadiusValue');
+    if (heroMouseHighlightRadius && heroMouseHighlightRadiusValue) {
+        heroMouseHighlightRadius.value = params.mouseHighlightRadius;
+        heroMouseHighlightRadiusValue.textContent = params.mouseHighlightRadius.toFixed(2);
     }
 }
 
@@ -214,7 +408,7 @@ function ensureInit() {
     
     // 元素存在，执行初始化
     initDebugPanel();
-    syncSliderValues();
+    syncHeroShaderValues();
     console.log('调试面板初始化完成');
 }
 

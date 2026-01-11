@@ -139,6 +139,8 @@ function createGeometries() {
             flatShading: false
         });
         
+        const mesh = new THREE.Mesh(geometry, material);
+        
         // 添加外发光效果（使用额外的几何体）
         const glowGeometry = geometry.clone();
         const glowMaterial = new THREE.MeshBasicMaterial({
@@ -150,8 +152,6 @@ function createGeometries() {
         const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
         glowMesh.scale.multiplyScalar(1.2);
         mesh.add(glowMesh);
-        
-        const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(geo.position[0], geo.position[1], geo.position[2]);
         
         // 保存原始位置用于力场计算

@@ -36,8 +36,8 @@ const projectStatus = {
 
 // 初始化项目卡片
 async function initProjects() {
-    const projectsGrid = document.getElementById('projectsGrid');
-    if (!projectsGrid) return;
+    const articlesList = document.getElementById('articlesList');
+    if (!articlesList) return;
     
     let projects = [];
     
@@ -66,122 +66,86 @@ async function initProjects() {
             project.tech_stack = project.techStack;
         }
         const card = createProjectCard(project, index);
-        projectsGrid.appendChild(card);
+        articlesList.appendChild(card);
     });
 }
 
-// 创建项目卡片
+// 创建项目卡片 - Article - large 样式
 function createProjectCard(project, index) {
     const card = document.createElement('a');
     card.href = project.link;
-    card.className = 'project-card card';
+    card.className = 'article-card';
     card.style.animationDelay = `${index * 0.1}s`;
     
+    // 图片层
+    const image = document.createElement('img');
+    image.className = 'article-image';
+    // 如果有图片 URL，使用它；否则使用占位符或默认背景
+    if (project.image_url || project.imageUrl) {
+        image.src = project.image_url || project.imageUrl;
+        image.alt = project.title || 'Project image';
+    } else {
+        // 使用占位符或根据项目类型生成默认背景色
+        const placeholderColors = {
+            app: 'linear-gradient(135deg, #FF5700 0%, #FF8C42 100%)',
+            animation: 'linear-gradient(135deg, #32CE57 0%, #5AE87A 100%)',
+            tool: 'linear-gradient(135deg, #A3CAFF 0%, #C5D9FF 100%)',
+            note: 'linear-gradient(135deg, #9747FF 0%, #B873FF 100%)',
+            experiment: 'linear-gradient(135deg, #FF5700 0%, #9747FF 100%)'
+        };
+        const bgColor = placeholderColors[project.type] || placeholderColors.app;
+        image.style.display = 'none';
+        card.style.background = bgColor;
+    }
+    card.appendChild(image);
+    
+    // 渐变遮罩
+    const gradient = document.createElement('div');
+    gradient.className = 'article-gradient';
+    card.appendChild(gradient);
+    
+    // 内容卡片
     const content = document.createElement('div');
-    content.className = 'project-card-content';
-    
-    // 顶部：类型和状态
-    const metaRow = document.createElement('div');
-    metaRow.className = 'project-meta';
-    
-    // 项目类型徽章
-    if (project.type && projectTypes[project.type]) {
-        const typeBadge = document.createElement('span');
-        typeBadge.className = 'project-type badge badge-outline';
-        typeBadge.textContent = `${projectTypes[project.type].icon} ${projectTypes[project.type].label}`;
-        typeBadge.style.color = projectTypes[project.type].color;
-        typeBadge.style.borderColor = projectTypes[project.type].color;
-        metaRow.appendChild(typeBadge);
-    }
-    
-    // 项目状态
-    if (project.status && projectStatus[project.status]) {
-        const statusBadge = document.createElement('span');
-        statusBadge.className = 'project-status badge badge-outline';
-        statusBadge.textContent = projectStatus[project.status].label;
-        statusBadge.style.color = projectStatus[project.status].color;
-        statusBadge.style.borderColor = projectStatus[project.status].color;
-        metaRow.appendChild(statusBadge);
-    }
+    content.className = 'article-content';
     
     // 标题
-    const title = document.createElement('div');
-    title.className = 'project-title';
-    const icon = document.createElement('span');
-    icon.className = 'project-icon';
-    icon.textContent = project.icon;
-    const titleText = document.createElement('span');
-    titleText.textContent = project.title;
-    title.appendChild(icon);
-    title.appendChild(titleText);
-    
-    // 描述
-    const description = document.createElement('div');
-    description.className = 'project-description';
-    description.textContent = project.description;
-    
-    // 技术栈（兼容 techStack 和 tech_stack）
-    const techStackList = project.tech_stack || project.techStack;
-    if (techStackList && techStackList.length > 0) {
-        const techStack = document.createElement('div');
-        techStack.className = 'project-tech-stack';
-        const techLabel = document.createElement('span');
-        techLabel.className = 'tech-label';
-        techLabel.textContent = '技术栈: ';
-        techStack.appendChild(techLabel);
-        
-        techStackList.forEach((tech, i) => {
-            const techItem = document.createElement('span');
-            techItem.className = 'tech-item';
-            techItem.textContent = tech;
-            techStack.appendChild(techItem);
-            if (i < techStackList.length - 1) {
-                const separator = document.createElement('span');
-                separator.textContent = ' • ';
-                separator.style.color = 'rgba(255, 255, 255, 0.4)';
-                techStack.appendChild(separator);
-            }
-        });
-        content.appendChild(techStack);
-    }
-    
-    // 标签
-    if (project.tags && project.tags.length > 0) {
-        const tags = document.createElement('div');
-        tags.className = 'project-tags';
-        project.tags.forEach(tag => {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'project-tag badge badge-secondary';
-        tagElement.textContent = tag;
-            tags.appendChild(tagElement);
-        });
-        content.appendChild(tags);
-    }
-    
-    // 底部信息：日期和灵感
-    const footer = document.createElement('div');
-    footer.className = 'project-footer';
-    
-    if (project.date) {
-        const dateElement = document.createElement('span');
-        dateElement.className = 'project-date';
-        dateElement.textContent = project.date;
-        footer.appendChild(dateElement);
-    }
-    
-    if (project.inspiration) {
-        const inspirationElement = document.createElement('span');
-        inspirationElement.className = 'project-inspiration';
-        inspirationElement.textContent = `💡 ${project.inspiration}`;
-        footer.appendChild(inspirationElement);
-    }
-    
-    content.appendChild(metaRow);
+    const title = document.createElement('h3');
+    title.className = 'article-title';
+    title.textContent = project.title || 'Untitled Project';
     content.appendChild(title);
-    content.appendChild(description);
-    if (footer.children.length > 0) {
-        content.appendChild(footer);
+    
+    // 元数据（类型 · 日期）
+    const meta = document.createElement('div');
+    meta.className = 'article-meta';
+    
+    // 项目类型
+    if (project.type && projectTypes[project.type]) {
+        const typeText = document.createTextNode(projectTypes[project.type].label);
+        meta.appendChild(typeText);
     }
+    
+    // 分隔符
+    if (project.type && project.date) {
+        const separator = document.createElement('span');
+        separator.className = 'article-meta-separator';
+        separator.textContent = ' · ';
+        meta.appendChild(separator);
+    }
+    
+    // 日期
+    if (project.date) {
+        // 格式化日期：如果日期格式是 YYYY-MM-DD，转换为更友好的格式
+        let dateText = project.date;
+        if (dateText.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            const date = new Date(dateText);
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            dateText = `${monthNames[date.getMonth()]} ${date.getDate()}`;
+        }
+        const dateNode = document.createTextNode(dateText);
+        meta.appendChild(dateNode);
+    }
+    
+    content.appendChild(meta);
     card.appendChild(content);
     
     return card;

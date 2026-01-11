@@ -2,51 +2,98 @@
 /* 注意：使用 Tailwind CDN 时，基础样式由 CDN 提供 */
 /* 如需使用本地构建版本，请运行 npm run build:css */
 
-/* 适配深色背景的 shadcn 变量 */
+/* The Playground 设计系统 - 基于 Figma 设计规范 */
+/* 来源: Figma 文件 SjB3CVroAhlLso46PUwO6l - The Playground */
+
 :root {
-  --background: 0 0% 0%;
-  --foreground: 210 40% 98%;
-  --card: 0 0% 10% / 0.8;
-  --card-foreground: 210 40% 98%;
-  --popover: 0 0% 10% / 0.95;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217 32% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 32% 17.5%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 217 32% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 32% 17.5%;
-  --input: 217 32% 17.5%;
-  --ring: 217 91% 60%;
-  --radius: 0.5rem;
+  /* 背景色 - 基于 Background 1 (#0F0E0E) */
+  --background: 0 3% 5%;
+  /* 前景色 - 基于 Text/Headline 1 (#F6F8FB) */
+  --foreground: 216 38% 97%;
+  
+  /* 卡片 - 基于 Background 2 (#1F1F1F) */
+  --card: 0 0% 12%;
+  --card-foreground: 216 38% 97%;
+  
+  /* 弹出层 */
+  --popover: 0 0% 12% / 0.95;
+  --popover-foreground: 216 38% 97%;
+  
+  /* 主色 - 基于 Stroke O8HRIW (#9747FF) 紫色 */
+  --primary: 266 100% 63%;
+  --primary-foreground: 216 38% 97%;
+  
+  /* 次要色 - 基于 Divider (#555659) */
+  --secondary: 224 2% 34%;
+  --secondary-foreground: 216 38% 97%;
+  
+  /* 静音色 - 基于 Divider (#555659) */
+  --muted: 224 2% 34%;
+  /* 静音前景色 - 基于 Text/Paragraph 3 (#8C8D92) */
+  --muted-foreground: 229 2% 56%;
+  
+  /* 强调色 - 基于 Divider (#555659) */
+  --accent: 224 2% 34%;
+  --accent-foreground: 216 38% 97%;
+  
+  /* 危险色 - 基于 Background 5 (#FF5700) 橙红色 */
+  --destructive: 20 100% 50%;
+  --destructive-foreground: 216 38% 97%;
+  
+  /* 边框色 - 基于 Divider (#555659) */
+  --border: 224 2% 34%;
+  --input: 224 2% 34%;
+  
+  /* 焦点环色 - 基于 Stroke O8HRIW (#9747FF) 紫色 */
+  --ring: 266 100% 63%;
+  
+  /* 圆角 - 基于设计系统最常用的 5px */
+  --radius: 0.3125rem; /* 5px */
+  
+  /* 字体系统 - 基于设计系统字体规范 */
+  --font-heading: "Tilt Warp", "Instrument Serif", system-ui, -apple-system, sans-serif;
+  --font-body: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  --font-label: "Roboto Flex", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", monospace;
+  
+  /* 间距系统 - 基于设计系统间距规范 */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 0.625rem;   /* 10px */
+  --spacing-base: 0.75rem;  /* 12px */
+  --spacing-lg: 1rem;       /* 16px */
+  --spacing-xl: 1.0625rem;  /* 17px */
+  --spacing-2xl: 1.25rem;   /* 20px */
+  --spacing-3xl: 1.5rem;    /* 24px */
+  --spacing-4xl: 2rem;      /* 32px */
+  --spacing-5xl: 2.5rem;    /* 40px */
+  --spacing-6xl: 3.125rem;  /* 50px */
+  --spacing-7xl: 4.625rem;  /* 74px */
+  --spacing-8xl: 6.25rem;   /* 100px */
+  --spacing-9xl: 8.875rem;  /* 142px */
 }
 
+/* 深色模式 - 使用相同的设计系统（默认即为深色主题） */
 .dark {
-  --background: 0 0% 0%;
-  --foreground: 210 40% 98%;
-  --card: 0 0% 10% / 0.8;
-  --card-foreground: 210 40% 98%;
-  --popover: 0 0% 10% / 0.95;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217 32% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 32% 17.5%;
-  --muted-foreground: 215 20% 65%;
-  --accent: 217 32% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 32% 17.5%;
-  --input: 217 32% 17.5%;
-  --ring: 217 91% 60%;
-}
+  --background: 0 3% 5%;
+  --foreground: 216 38% 97%;
+  --card: 0 0% 12%;
+  --card-foreground: 216 38% 97%;
+  --popover: 0 0% 12% / 0.95;
+  --popover-foreground: 216 38% 97%;
+  --primary: 266 100% 63%;
+  --primary-foreground: 216 38% 97%;
+  --secondary: 224 2% 34%;
+  --secondary-foreground: 216 38% 97%;
+  --muted: 224 2% 34%;
+  --muted-foreground: 229 2% 56%;
+  --accent: 224 2% 34%;
+  --accent-foreground: 216 38% 97%;
+  --destructive: 20 100% 50%;
+  --destructive-foreground: 216 38% 97%;
+  --border: 224 2% 34%;
+  --input: 224 2% 34%;
+  --ring: 266 100% 63%;
 }
 
 /* 基础样式 */
@@ -55,12 +102,19 @@
 }
 
 body {
-  background-color: hsl(var(--background));
+  /* 使用 transparent 保持 Three.js 背景可见，但保留颜色变量供其他元素使用 */
+  background: transparent;
   color: hsl(var(--foreground));
+  font-family: var(--font-body);
 }
 
-/* 确保在深色背景下文字可见 */
-body {
-  background: transparent; /* 保持 Three.js 背景可见 */
+/* 标题字体 */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* 等宽字体 */
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
 }
 

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playground - 个人创意实验场</title>
+    <!-- Google Fonts - 设计系统字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Warp&family=Geist:wght@400;600&family=Instrument+Serif:wght@400&family=Roboto+Flex:wght@500&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN (开发环境) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -68,16 +72,48 @@
     
     <!-- 主要内容 -->
     <div class="content-wrapper">
-        <header class="header">
-            <h1 class="site-title">Playground</h1>
-            <p class="site-subtitle">个人创意实验场与灵感沉淀空间</p>
-        </header>
+        <!-- 导航栏 -->
+        <nav class="navigation">
+            <div class="nav-logo">
+                <!-- Logo 图片：从 Figma 导出 44x44px 的 PNG 图片到 images/logo.png -->
+                <img src="images/logo.png" alt="Playground Logo" class="logo-image" onerror="this.style.display='none'">
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-item nav-item-1">Home</a>
+                <a href="#" class="nav-item nav-item-2">Archive</a>
+                <a href="#" class="nav-item nav-item-3">About</a>
+            </div>
+            <div class="nav-spacer"></div>
+        </nav>
         
-        <main class="projects-container">
-            <div class="projects-grid" id="projectsGrid">
+        <!-- Marquee 滚动文字区域 -->
+        <div class="marquee">
+            <p class="marquee-text">个人创意实验场与灵感沉淀空间—一个深度探索的地方。</p>
+        </div>
+        
+        <!-- 主体内容容器 -->
+        <div class="body-content-container">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <canvas id="hero-shader-canvas"></canvas>
+                <div class="hero-logo-container">
+                    <h1 class="hero-title">Playground</h1>
+                </div>
+            </section>
+            
+            <!-- 文章列表 -->
+            <div class="articles-list" id="articlesList">
                 <!-- 项目卡片将通过 JavaScript 动态添加 -->
             </div>
-        </main>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="site-footer">
+            <h2 class="footer-title">Playground</h2>
+            <div class="footer-content">
+                <p class="footer-text">©2025 Playground<br>Words, images, and signals from the edge</p>
+            </div>
+        </footer>
     </div>
     
     <!-- 调试面板 -->
@@ -87,33 +123,97 @@
             <button id="closeDebugPanel" class="close-btn">×</button>
         </div>
         <div class="debug-panel-content">
+            <h4 style="margin: 0 0 15px 0; font-size: 0.95rem; font-weight: 600; color: hsl(var(--foreground)); border-bottom: 1px solid hsl(var(--border) / 0.2); padding-bottom: 8px;">Hero Shader 背景</h4>
+            
+            <!-- 渐变颜色 -->
             <div class="debug-control-group">
-                <label for="forceRadius">
-                    <span>力场半径</span>
-                    <span id="forceRadiusValue">15</span>
+                <label for="heroColorStart">
+                    <span>渐变起始色</span>
+                    <input type="color" id="heroColorStart" value="#F64545" style="width: 40px; height: 24px; border: 1px solid hsl(var(--border)); border-radius: 4px; cursor: pointer;">
                 </label>
-                <input type="range" id="forceRadius" min="5" max="30" value="15" step="1">
             </div>
             <div class="debug-control-group">
-                <label for="forceStrength">
-                    <span>推力强度</span>
-                    <span id="forceStrengthValue">2</span>
+                <label for="heroColorEnd">
+                    <span>渐变结束色</span>
+                    <input type="color" id="heroColorEnd" value="#E1F664" style="width: 40px; height: 24px; border: 1px solid hsl(var(--border)); border-radius: 4px; cursor: pointer;">
                 </label>
-                <input type="range" id="forceStrength" min="0.5" max="5" value="2" step="0.1">
             </div>
             <div class="debug-control-group">
-                <label for="maxDeformation">
-                    <span>最大形变</span>
-                    <span id="maxDeformationValue">0.3</span>
+                <label for="heroGradientAngle">
+                    <span>渐变角度</span>
+                    <span id="heroGradientAngleValue">36</span>°
                 </label>
-                <input type="range" id="maxDeformation" min="0" max="1" value="0.3" step="0.05">
+                <input type="range" id="heroGradientAngle" min="0" max="360" value="36" step="1">
+            </div>
+            
+            <!-- 光晕效果 -->
+            <div class="debug-control-group">
+                <label for="heroGlowIntensity">
+                    <span>光晕强度</span>
+                    <span id="heroGlowIntensityValue">0.5</span>
+                </label>
+                <input type="range" id="heroGlowIntensity" min="0" max="2" value="0.5" step="0.1">
             </div>
             <div class="debug-control-group">
-                <label for="smoothFactor">
-                    <span>平滑因子</span>
-                    <span id="smoothFactorValue">0.1</span>
+                <label for="heroGlowSpeed">
+                    <span>光晕速度</span>
+                    <span id="heroGlowSpeedValue">0.5</span>
                 </label>
-                <input type="range" id="smoothFactor" min="0.01" max="0.5" value="0.1" step="0.01">
+                <input type="range" id="heroGlowSpeed" min="0" max="2" value="0.5" step="0.1">
+            </div>
+            <div class="debug-control-group">
+                <label for="heroGlowCount">
+                    <span>光晕数量</span>
+                    <span id="heroGlowCountValue">3</span>
+                </label>
+                <input type="range" id="heroGlowCount" min="1" max="6" value="3" step="1">
+            </div>
+            
+            <!-- 噪点纹理 -->
+            <div class="debug-control-group">
+                <label for="heroNoiseIntensity">
+                    <span>噪点强度</span>
+                    <span id="heroNoiseIntensityValue">0.3</span>
+                </label>
+                <input type="range" id="heroNoiseIntensity" min="0" max="1" value="0.3" step="0.05">
+            </div>
+            <div class="debug-control-group">
+                <label for="heroNoiseScale">
+                    <span>噪点缩放</span>
+                    <span id="heroNoiseScaleValue">2.0</span>
+                </label>
+                <input type="range" id="heroNoiseScale" min="0.5" max="5" value="2.0" step="0.1">
+            </div>
+            
+            <!-- 动画 -->
+            <div class="debug-control-group">
+                <label for="heroFlowSpeed">
+                    <span>流动速度</span>
+                    <span id="heroFlowSpeedValue">1.0</span>
+                </label>
+                <input type="range" id="heroFlowSpeed" min="0" max="3" value="1.0" step="0.1">
+            </div>
+            
+            <!-- 鼠标交互 -->
+            <div class="debug-control-group">
+                <label for="heroMouseHighlightIntensity">
+                    <span>鼠标高亮强度</span>
+                    <span id="heroMouseHighlightIntensityValue">0.5</span>
+                </label>
+                <input type="range" id="heroMouseHighlightIntensity" min="0" max="1" value="0.5" step="0.05">
+            </div>
+            <div class="debug-control-group">
+                <label for="heroMouseHighlightRadius">
+                    <span>鼠标高亮半径</span>
+                    <span id="heroMouseHighlightRadiusValue">0.3</span>
+                </label>
+                <input type="range" id="heroMouseHighlightRadius" min="0.1" max="1" value="0.3" step="0.05">
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="heroShaderSaveBtn" style="flex: 1; padding: 8px 16px; background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: opacity 0.2s;">保存配置</button>
+                <button id="heroShaderResetBtn" style="flex: 1; padding: 8px 16px; background: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: opacity 0.2s;">重置默认</button>
             </div>
         </div>
         <div class="debug-panel-footer">
@@ -127,6 +227,8 @@
     <script src="js/api.js"></script>
     <!-- 背景动画脚本 -->
     <script src="js/background.js"></script>
+    <!-- Hero Shader 背景脚本 -->
+    <script src="js/hero-shader.js"></script>
     <!-- 主页交互脚本 -->
     <script src="js/home.js"></script>
     <!-- 调试面板脚本 -->
